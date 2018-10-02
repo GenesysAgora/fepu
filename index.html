@@ -394,14 +394,14 @@
 				let loader = new THREE.FontLoader();
 				loader.load( 'fonts/helvetiker_regular.typeface.json', ( font )=> {
 
-				let str = "The Current Vice President of Nigeria is Prof Yemi Osibanjo";
+				let str = "The Current Vice President of Nigeria is Prof Yemi Osinbajo";
 
 				let textShape = createFontGeometry(font, str)
 
 				text = new THREE.Mesh( textShape, matLite );
 				text.position.z = - 50;
 				text.position.y = 5;
-				text.scale.set(0.03, 0.03, 0.03)
+				text.scale.set(0.01, 0.01, 0.01)
 				parent.add( text );
 			})
 		}

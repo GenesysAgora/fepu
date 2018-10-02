@@ -38,7 +38,7 @@
 			let questionText = null;
 			let factCursor = 0;
 			let factGeom = [];
-			let span = 6;
+			let span = 15;
 			let currentSpan = 0;
 			const deg2Rad = 0.017456;
 			const rad2Deg = 57.288;
@@ -52,9 +52,18 @@
 			document.body.appendChild( WEBVR.createButton( renderer, { frameOfReferenceType: 'eyeLevel' } ) );
 
 			let facts = [
-				"Nigeria has the largest butterfly diversity",
-				"Ogun state has 9 registered Universities the highest count in the country",
-				"The third MainLand bridge in Lagos is the longest bridge in Africa"
+			"The Portuguese first reached Nigeria in 1472",
+			"Nigeria has the largest butterfly diversity",
+			"Ogun state has 9 registered Universities the highest count in the country",
+			"The third MainLand bridge in Lagos is the longest bridge in Africa",
+			"While English is the official language, there are over 500 indigenous languages in Nigeria",
+			"Nigeria has a federal presidential republic government",
+			"Nigerians must be at least 18 years old to vote",
+			"In terms of size, Nigeria is about double the size of the state of California",
+			"While some cultures believe it’s rude to not look someone in the eye, \nin Nigeria, it is customary to not look into someone’s eyes",
+			"The Niger River, which spans 2,600 miles, is the third largest river in West Africa",
+			"Genesys Tech Hub is the first Tech Hub of its kind in the South East region of Nigeria",
+			"The country’s cash crops include cocoa, wheat, peanuts, and cotton"
 			]
 
 
@@ -68,7 +77,6 @@
 
 			let matLite = new THREE.MeshBasicMaterial( {
 				color: color,
-				transparent: true,
 				opacity: 0.4,
 				side: THREE.DoubleSide
 			} );

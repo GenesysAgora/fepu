@@ -33,6 +33,15 @@
 
 		<script>
 
+			var mixers = [];
+			let fontBuf = null;
+			let questionText = null;
+			let factCursor = 0;
+			let factGeom = [];
+			let span = 2;
+			let currentSpan = 0;
+			const deg2Rad = 0.017456;
+			const rad2Deg = 57.288;
 			var renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -41,6 +50,28 @@
 			document.body.appendChild( renderer.domElement );
 
 			document.body.appendChild( WEBVR.createButton( renderer, { frameOfReferenceType: 'eyeLevel' } ) );
+
+			let facts = [
+				"Nigeria has the largest butterfly diversity",
+				"Ogun state has 9 registered Universities the highest count in the country",
+				"The third MainLand bridge in Lagos is the longest bridge in Africa"
+			]
+
+
+			
+
+			let color = 0xf70000;
+			let matDark = new THREE.LineBasicMaterial( {
+				color: color,
+				side: THREE.DoubleSide
+			} );
+
+			let matLite = new THREE.MeshBasicMaterial( {
+				color: color,
+				transparent: true,
+				opacity: 0.4,
+				side: THREE.DoubleSide
+			} );
 
 			//
 
@@ -57,7 +88,8 @@
 			var camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 0.1, 500 );
 			train.add( camera );
 
-			createQuestionText(train);
+			initQuestionPanel(train);
+			loadFlyer(train);
 
 			// environment
 
@@ -218,6 +250,15 @@
 				var time = performance.now();
 				var delta = time - prevTime;
 
+				currentSpan += (delta / 1000);
+				if(currentSpan >= span){
+
+					changeText();
+					currentSpan = 0;
+				}
+
+				for ( var i = 0; i < mixers.length; i ++ ) mixers[ i ].update( delta * 1.5 );
+
 				for ( var i = 0; i < funfairs.length; i ++ ) {
 
 					funfairs[ i ].rotation.y = time * 0.0004;
@@ -249,36 +290,46 @@
 
 			}
 
+			function changeText(){
 
-			
-			function createQuestionText(parent){
-        
-				let loader = new THREE.FontLoader();
-				loader.load( 'fonts/helvetiker_regular.typeface.json', ( font )=> {
+				let fact = facts[factCursor];
+				if(questionText && fontBuf) questionText.geometry = factGeom[factCursor];// createFontGeometry(fontBuf, fact);
+				
+				factCursor += 1;
 
+				if(factCursor >= facts.length) factCursor = 0;
+			}
+
+			function loadFlyer(parent){
+				let loader =  new THREE.JSONLoader();
+
+				loader.load( 'models/flamingo.js', ( geometry )=> {
+
+					var material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff, shininess: 20, morphTargets: true, vertexColors: THREE.FaceColors, flatShading: true } );
+					var mesh = new THREE.Mesh( geometry, material );
+
+					var s = 0.04;
+					mesh.scale.set( s, s, s );
+					mesh.position.y = 9;
+					mesh.rotation.y = 180 * deg2Rad;
+
+					mesh.castShadow = true;
+					mesh.receiveShadow = true;
+
+					parent.add( mesh );
+
+
+					var mixer = new THREE.AnimationMixer( mesh );
+					mixer.clipAction( geometry.animations[ 0 ] ).setDuration( 1 ).play();
+					mixers.push( mixer );
+
+				} );
+			}
+
+			function createFontGeometry(font, str){
 				let xMid, text;
 
 				let textShape = new THREE.BufferGeometry();
-
-				let color = 0xf70000;
-
-				let matDark = new THREE.LineBasicMaterial( {
-					color: color,
-					side: THREE.DoubleSide
-				} );
-
-				let matLite = new THREE.MeshBasicMaterial( {
-					color: color,
-					transparent: true,
-					opacity: 0.4,
-					side: THREE.DoubleSide
-				} );
-				
-				let str = "Who Is the current Vice President of Nigeria"
-				str += "\nA: Prof Yemi Osibanjo";
-				str += "\nB: My Ahmed Musa";
-				str += "\nC: Barr Toju Adeleke";
-				str += "\nD: Engr Ukwu Ekwene";
 
 				let message = str; // "   Three.js\nSimple text.";
 
@@ -296,9 +347,50 @@
 
 				textShape.fromGeometry( geometry );
 
+				return textShape
+			}
+
+			function initQuestionPanel(parent){
+        
+					let loader = new THREE.FontLoader();
+					loader.load( 'fonts/helvetiker_regular.typeface.json', ( font )=> {
+
+					let str = "The Current Vice President of Nigeria is Prof Yemi Osibanjo";
+
+					let textShape = createFontGeometry(font, str)
+
+					questionText = new THREE.Mesh( textShape, matLite );
+					questionText.position.z = - 50;
+					questionText.position.y = 5;
+					questionText.scale.set(0.03, 0.03, 0.03)
+					parent.add( questionText );
+
+					fontBuf = font;
+
+					functionPopulateFactGeom();
+				})
+
+			}
+
+			function functionPopulateFactGeom(){
+				facts.forEach(str=>{
+					factGeom.push(createFontGeometry(fontBuf, str))
+				})
+			}
+
+			
+			function createQuestionText(parent){
+        
+				let loader = new THREE.FontLoader();
+				loader.load( 'fonts/helvetiker_regular.typeface.json', ( font )=> {
+
+				let str = "The Current Vice President of Nigeria is Prof Yemi Osibanjo";
+
+				let textShape = createFontGeometry(font, str)
+
 				text = new THREE.Mesh( textShape, matLite );
 				text.position.z = - 50;
-				text.position.y = 30;
+				text.position.y = 5;
 				text.scale.set(0.03, 0.03, 0.03)
 				parent.add( text );
 			})

@@ -38,7 +38,7 @@
 			let questionText = null;
 			let factCursor = 0;
 			let factGeom = [];
-			let span = 15;
+			let span = 5;
 			let currentSpan = 0;
 			const deg2Rad = 0.017456;
 			const rad2Deg = 57.288;
@@ -69,7 +69,7 @@
 
 			
 
-			let color = 0xf70000;
+			let color = 0x000000;
 			let matDark = new THREE.LineBasicMaterial( {
 				color: color,
 				side: THREE.DoubleSide
@@ -97,7 +97,7 @@
 			train.add( camera );
 
 			initQuestionPanel(train);
-			loadFlyer(train);
+			//loadFlyer(train);
 
 			// environment
 
@@ -257,15 +257,16 @@
 
 				var time = performance.now();
 				var delta = time - prevTime;
+				let timeSpan = (delta / 1000);
 
-				currentSpan += (delta / 1000);
+				currentSpan += timeSpan;
 				if(currentSpan >= span){
 
 					changeText();
 					currentSpan = 0;
 				}
 
-				for ( var i = 0; i < mixers.length; i ++ ) mixers[ i ].update( delta * 1.5 );
+				//for ( var i = 0; i < mixers.length; i ++ ) mixers[ i ].update( timeSpan * 0.8 );
 
 				for ( var i = 0; i < funfairs.length; i ++ ) {
 
@@ -318,7 +319,8 @@
 
 					var s = 0.04;
 					mesh.scale.set( s, s, s );
-					mesh.position.y = 9;
+					mesh.position.y = -3;
+					mesh.position.z = -10;
 					mesh.rotation.y = 180 * deg2Rad;
 
 					mesh.castShadow = true;
